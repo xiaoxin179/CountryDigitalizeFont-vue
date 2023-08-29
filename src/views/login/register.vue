@@ -4,10 +4,12 @@
       <el-card class="main-el">
         <h3 class="denglu">
           用户注册
-          <el-button class="bt-re" @click="toLogin()"> 登录</el-button>
+          <el-button class="bt-re" @click="router.push('/login')">
+            登录</el-button
+          >
         </h3>
         <el-form
-          :model="ruleForm"
+          :model="Form"
           status-icon
           :rules="rules"
           ref="ruleForm"
@@ -16,47 +18,44 @@
           <el-form-item>
             <el-input
               type="text"
-              v-model="ruleForm.name"
+              v-model="Form.username"
               autocomplete="off"
               placeholder="用户名"
-              prefix-icon
-              prop="name"
+              :prefix-icon="User"
+              prop="username"
             ></el-input>
           </el-form-item>
           <el-form-item>
             <el-input
               type="text"
-              v-model="ruleForm.phone"
+              v-model="Form.email"
               autocomplete="off"
-              placeholder="电话"
-              prop="phone"
+              placeholder="邮箱"
+              :prefix-icon="ChatLineSquare"
+              prop="email"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
               type="password"
-              v-model="ruleForm.password"
+              v-model="Form.password"
               autocomplete="off"
               placeholder="密码"
+              :prefix-icon="Lock"
             ></el-input>
           </el-form-item>
           <el-form-item prop="checkPass">
             <el-input
               type="password"
-              v-model="ruleForm.checkPass"
+              v-model="Form.checkPass"
               autocomplete="off"
               placeholder="确认密码"
+              :prefix-icon="Check"
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="submitForm('ruleForm')"
-              style="width: 48%"
+            <el-button type="primary" @click="register" style="width: 100%"
               >注册</el-button
-            >
-            <el-button @click="resetForm('ruleForm')" style="width: 48%"
-              >重置</el-button
             >
           </el-form-item>
         </el-form>
@@ -64,87 +63,46 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import { Icon } from "@iconify/vue";
-export default {
-  data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("年龄不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (value < 18) {
-            callback(new Error("必须年满18岁"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.password) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
-    return {
-      ruleForm: {
-        phone: "",
-        password: "",
-        name: "",
-        checkPass: "",
-        age: "",
-      },
-      rules: {
-        password: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-      },
-    };
-  },
-  methods: {
-    submitForm(formName) {
-      this.$axios
-        .post("http://localhost:9090/sys-user/register", this.ruleForm)
-        .then((resp) => {
-          console.log(resp);
-          let data = resp.data;
-          console.log(data);
-          if (data.success) {
-            this.ruleForm = {};
-            this.$message({
-              message: "恭喜你,注册成功,点击去登陆按钮进行登陆吧!!!",
-              type: "success",
-            });
-            this.$router.push({ path: "/login" });
-          }
-        });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-    toLogin() {
-      this.$router.push("/login");
-    },
-  },
-  components: {
-    Icon,
-  },
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { User, ChatLineSquare, Lock, Check } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import request from '../../utils/request'
+const Form = reactive({});
+const ruleForm = ref();
+const router = useRouter();
+const confirmPass = (rule, value, callback) => {
+  if (value === "") {
+    callback(new Error("请再次确认密码"));
+  }
+  callback();
+};
+const confirmEmail = (rule, value, callback) => {
+  if (value === "") {
+    callback(new Error("输入邮箱的格式不正确"));
+  }
+  callback();
+};
+// 校验器
+const rules = reactive({
+  username: [{ require: true, message: "请输入用户名", trigger: "blur" }],
+  password: [{ require: true, message: "请输入密码", trigger: "blur" }],
+  checkPass: [{ validator: confirmPass, trigger: "blur" }],
+  email: [{ validator: confirmEmail, trigger: "blur" }],
+});
+const register = () => {
+  request.post('/register',Form).then((res)=>{
+    console.log(res);
+    if(res.code==='200'){
+      ElMessage.success('注册成功，请用户登录!')
+      router.push('/login')
+    }
+    else{
+      ElMessage.error(res.msg)
+    }
+  })
 };
 </script>
 <style scoped>
@@ -165,11 +123,11 @@ html .main-el {
   margin-top: 300px;
   margin-left: 650px;
 }
-#build-res{
-  background:url("@/assets/img/login_img/login.png");
-  width:100%;
-  height:100%;
-  position:fixed;
-  background-size:100% 100%;
+#build-res {
+  background: url("@/assets/img/login_img/login.png");
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-size: 100% 100%;
 }
 </style>

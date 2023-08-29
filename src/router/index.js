@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '../stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,7 +42,7 @@ const router = createRouter({
       path: '/farmer/buy',
       name: 'buy_home',
       component: () => import('../views/farmer/Buy/home.vue'),
-      children:[
+      children: [
         {
           path: '/farmer/buy/about',
           name: 'buy_about',
@@ -51,13 +52,13 @@ const router = createRouter({
           path: '/farmer/buy/firstpage',
           name: 'buy_firstPage',
           component: () => import('../views/farmer/Buy/Firstpage.vue')
-        },{
+        }, {
           path: '/farmer/buy/goods',
           name: 'Goods',
           component: () => import('../views/farmer/Buy/goods.vue')
         },
       ]
-  
+
     },
     // 文化社区中的路由
     {
@@ -65,7 +66,7 @@ const router = createRouter({
       name: 'farmer-culture',
       redirect: '/farmer/cul/tscol',
       component: () => import('@/views/farmer/Culture/culture_index.vue'),
-      children:[
+      children: [
         {
           path: '/farmer/cul/tscol',
           name: 'tscol',
@@ -87,16 +88,16 @@ const router = createRouter({
           component: () => import('@/views/farmer/Culture/activity/main.vue')
         }
       ]
-        
-      
+
+
     },
     // 生态区所有的路由
     {
       path: '/farmer/en',
       name: 'farmer-en',
       component: () => import('@/views/farmer/en/en_index.vue'),
-      redirect:'/farmer/en/EnMessage',
-      children:[
+      redirect: '/farmer/en/EnMessage',
+      children: [
         {
           path: '/farmer/en/EnMessage',
           name: 'EnMessage',
@@ -119,13 +120,28 @@ const router = createRouter({
       path: '/farmer/parts',
       name: 'farmer-parts',
       component: () => import('@/views/farmer/parts/parts_index.vue'),
-      children:[
-  
+      children: [
+
       ]
     },
-    
-  
+    // 个人中心路由
+    {
+      path: '/farmer/person',
+      name: 'com-person',
+      component: () => import('../views/farmer/Person/Person.vue')
+    }
   ]
 })
-
+router.beforeEach((to, from, next) => {
+  // 获取缓存的数据
+  const store = useUserStore()
+  const user = store.user
+  const haveUser = user && user.id
+  const noPermissionPahths = ['/login', '/register']
+  if (!haveUser && !noPermissionPahths.includes(to.path)) {//用户没有登录
+    next('/login')
+  } else {
+    next()
+  }
+})
 export default router

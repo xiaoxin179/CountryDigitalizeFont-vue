@@ -74,13 +74,8 @@
         </el-dropdown>
       </el-header>
       <el-main>
-        <!-- 最新活动通知 -->
-        <message />
-        <br />
-        <!--      轮播图-->
-        <lunbo />
-        <!-- 消息展示 -->
-        <new_huodon />
+       
+        
         <!-- 网页底部信息 -->
         <Footer />
       </el-main>
@@ -94,13 +89,6 @@ import message from "@/views/farmer/HomeCom/message.vue";
 import new_huodon from "@/views/farmer/HomeCom/news.vue";
 import Footer from "@/views/farmer/HomeCom/footer.vue";
 import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const goToGy = () => {
-  window.open("http://www.nxgy.gov.cn/zjgy/");
-};
-
 const logout = () => {
   localStorage.removeItem("user");
   window.location.reload()
