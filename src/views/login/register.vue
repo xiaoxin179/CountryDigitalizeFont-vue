@@ -64,7 +64,6 @@
   </div>
 </template>
 <script setup>
-import { Icon } from "@iconify/vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { User, ChatLineSquare, Lock, Check } from "@element-plus/icons-vue";
