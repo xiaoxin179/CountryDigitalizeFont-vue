@@ -111,14 +111,14 @@
             </el-menu>
           </div>
           <div style="flex: 1; border: 1px solid #ccc; border-radius: 10px">
-            <el-form style=" width: 600px" :model="user">
+            <el-form style="width: 600px" :model="user">
               <el-form-item>
                 <el-upload
                   class="avatar-uploader"
                   :action="url"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
-                  style="margin: 20px ;margin-left:50px"
+                  style="margin: 20px; margin-left: 50px"
                 >
                   <img v-if="user.avatar" :src="user.avatar" class="avatar" />
                   <el-icon v-else class="avatar-uploader-icon"
@@ -132,19 +132,19 @@
                   :disabled="isUpdate === 0"
                 ></el-input
               ></el-form-item>
-              <el-form-item label="姓   名:"
+              <el-form-item label="姓名："
                 ><el-input
                   v-model="user.name"
                   :disabled="isUpdate === 0"
                 ></el-input
               ></el-form-item>
-              <el-form-item label="邮 箱:"
+              <el-form-item label="邮 箱："
                 ><el-input
                   v-model="user.email"
                   :disabled="isUpdate === 0"
                 ></el-input
               ></el-form-item>
-              <el-form-item label="地 址:"
+              <el-form-item label="地 址："
                 ><el-input
                   v-model="user.address"
                   :disabled="isUpdate === 0"
@@ -177,9 +177,14 @@ import Footer from "@/views/farmer/HomeCom/footer.vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../../../stores/user";
 import request from "../../../utils/request";
-import { Setting, ChatDotRound, Histogram,Plus } from "@element-plus/icons-vue";
+import {
+  Setting,
+  ChatDotRound,
+  Histogram,
+  Plus,
+} from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import config from '../../../../configs';
+import config from "../../../../configs";
 // 退出登录函数
 const logout = () => {
   localStorage.removeItem("user");
@@ -198,18 +203,32 @@ leader();
 const isUpdate = ref(0);
 const update = () => {
   isUpdate.value = 1;
-  console.log(isUpdate.value);
 };
 const oldNew = ref(0);
 const younfNew = ref();
+const oldPhoto = ref(0);
+const newPhoto = ref();
+const url = ref("http://" + config.serverUrl + "/file/upload");
+const handleAvatarSuccess = (res) => {
+  if (res.code === "200") {
+    user.avatar = res.data + "?loginId=" + store.getUser.userid;
+    oldPhoto.value = 1;
+    ElMessage.success("用户头像上传成功！")
+  } else {
+    ElMessage.error("用户头像上传失败！");
+  }
+};
 const save = () => {
   younfNew.value = isUpdate.value;
   isUpdate.value = 0;
-  if (oldNew.value !== younfNew.value) {
-    ElMessage.success("保存成功!");
+  if (oldNew.value !== younfNew.value || oldPhoto.value == 1) {
+    debugger;
+    request.put("/user", user).then((res) => {
+      Object.assign(user, res.data);
+    });
+    ElMessage.success("用户信息更新成功!");
   }
 };
-const url=ref(config.serverUrl+"/file/upload")
 </script>
 <style scoped>
 a {
@@ -265,11 +284,11 @@ a {
   text-align: left;
 }
 .avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
+  width: 150px;
+  height: 150px;
   display: block;
+  border-radius: 50%;
 }
-
 </style>
 <style>
 .avatar-uploader .el-upload {
