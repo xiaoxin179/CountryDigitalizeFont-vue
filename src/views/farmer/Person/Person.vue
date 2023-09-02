@@ -1,19 +1,25 @@
 <template>
   <div id="main">
     <!-- 设置布局 -->
-    <div id="head">
+    <div id="head"  style="display: flex;">
       <div id="dzjy">
         <h3 class="title">乡村振兴数字化综合服务平台--闵宁镇</h3>
-        <div>
-          <el-button
-            type="info"
-            round
-            @click="logout"
-            style="margin-left: 1400px; margin-top: 17px"
-            >退出</el-button
-          >
-        </div>
       </div>
+      <div style="flex:1;display: float;">
+        <span style="float: right;margin: 25px 15px 15px 15px;font-weight: lighter;color: #ccc;">{{ store.user.name }}</span>
+          <el-dropdown style="float:right;margin:15px">
+            <el-avatar
+                :src="store.user.avatar"
+              />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+               
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          
+        </div>
     </div>
     <el-container id="elcontainer">
       <el-header id="elheader">
@@ -97,7 +103,7 @@
               style="margin-top: 100px"
             >
               <el-menu-item index="1">
-                <el-icon><setting /></el-icon>
+                <el-icon><User /></el-icon>
                 <span>个人资料</span>
               </el-menu-item>
               <el-menu-item index="2">
@@ -105,62 +111,12 @@
                 <span>消息通知</span>
               </el-menu-item>
               <el-menu-item index="3">
-                <el-icon><Histogram /></el-icon>
-                <span>博文管理</span>
+                <el-icon><Lock /></el-icon>
+                <span>修改密码</span>
               </el-menu-item>
             </el-menu>
           </div>
-          <div style="flex: 1; border: 1px solid #ccc; border-radius: 10px">
-            <el-form style="width: 600px" :model="user">
-              <el-form-item>
-                <el-upload
-                  class="avatar-uploader"
-                  :action="url"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  style="margin: 20px; margin-left: 50px"
-                >
-                  <img v-if="user.avatar" :src="user.avatar" class="avatar" />
-                  <el-icon v-else class="avatar-uploader-icon"
-                    ><Plus
-                  /></el-icon>
-                </el-upload>
-              </el-form-item>
-              <el-form-item label="用户名:"
-                ><el-input
-                  v-model="user.username"
-                  :disabled="isUpdate === 0"
-                ></el-input
-              ></el-form-item>
-              <el-form-item label="姓名："
-                ><el-input
-                  v-model="user.name"
-                  :disabled="isUpdate === 0"
-                ></el-input
-              ></el-form-item>
-              <el-form-item label="邮 箱："
-                ><el-input
-                  v-model="user.email"
-                  :disabled="isUpdate === 0"
-                ></el-input
-              ></el-form-item>
-              <el-form-item label="地 址："
-                ><el-input
-                  v-model="user.address"
-                  :disabled="isUpdate === 0"
-                ></el-input
-              ></el-form-item>
-            </el-form>
-            <div style="margin-left: 30px">
-              <el-button
-                type="primary"
-                style="margin-right: 450px"
-                @click="update"
-                >修改</el-button
-              >
-              <el-button type="success" @click="save">保存</el-button>
-            </div>
-          </div>
+          <MainMyInfo/>
         </div>
         <!-- 网页底部信息 -->
         <Footer />
@@ -174,14 +130,15 @@ import lunbo from "@/views/farmer/HomeCom/lunbo.vue";
 import message from "@/views/farmer/HomeCom/message.vue";
 import new_huodon from "@/views/farmer/HomeCom/news.vue";
 import Footer from "@/views/farmer/HomeCom/footer.vue";
-import { useRouter } from "vue-router";
 import { useUserStore } from "../../../stores/user";
 import request from "../../../utils/request";
+import MainMyInfo from '../../../Components/MainMyInfo.vue'
 import {
   Setting,
   ChatDotRound,
   Histogram,
   Plus,
+  User,
 } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import config from "../../../../configs";
@@ -190,45 +147,11 @@ const logout = () => {
   localStorage.removeItem("user");
   window.location.reload();
 };
-const user = reactive({});
 const store = useUserStore();
-// 加载用户数据函数
-const leader = () => {
-  request.get("/user/" + store.user.id).then((res) => {
-    Object.assign(user, res.data);
-  });
-};
-leader();
-// 点击修改用户数据
-const isUpdate = ref(0);
-const update = () => {
-  isUpdate.value = 1;
-};
-const oldNew = ref(0);
-const younfNew = ref();
-const oldPhoto = ref(0);
-const newPhoto = ref();
-const url = ref("http://" + config.serverUrl + "/file/upload");
-const handleAvatarSuccess = (res) => {
-  if (res.code === "200") {
-    user.avatar = res.data + "?loginId=" + store.getUser.userid;
-    oldPhoto.value = 1;
-    ElMessage.success("用户头像上传成功！")
-  } else {
-    ElMessage.error("用户头像上传失败！");
-  }
-};
-const save = () => {
-  younfNew.value = isUpdate.value;
-  isUpdate.value = 0;
-  if (oldNew.value !== younfNew.value || oldPhoto.value == 1) {
-    debugger;
-    request.put("/user", user).then((res) => {
-      Object.assign(user, res.data);
-    });
-    ElMessage.success("用户信息更新成功!");
-  }
-};
+
+
+
+
 </script>
 <style scoped>
 a {
@@ -282,33 +205,5 @@ a {
   font-size: 22px;
   font-family: 宋体;
   text-align: left;
-}
-.avatar-uploader .avatar {
-  width: 150px;
-  height: 150px;
-  display: block;
-  border-radius: 50%;
-}
-</style>
-<style>
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
-
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
-
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 120px;
-  height: 120px;
-  text-align: center;
 }
 </style>

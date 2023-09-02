@@ -37,6 +37,7 @@ export default {
   },
 };
 </script>
+
   <style scoped>
 /* 设置主要展示区域 */
 * {

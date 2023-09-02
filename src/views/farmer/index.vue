@@ -1,19 +1,24 @@
 <template>
   <div id="main">
     <!-- 设置布局 -->
-    <div id="head">
+    <div id="head"  style="display: flex;">
       <div id="dzjy">
         <h3 class="title">乡村振兴数字化综合服务平台--闵宁镇</h3>
-        <div>
-          <el-button
-            type="info"
-            round
-            @click="logout"
-            style="margin-left: 1400px; margin-top: 17px"
-            >退出</el-button
-          >
-        </div>
       </div>
+      <div style="flex:1;display: float;">
+        <span style="float: right;margin: 25px 15px 15px 15px;font-weight: lighter;color: #ccc;">{{ store.user.name }}</span>
+          <el-dropdown style="float:right;margin:15px">
+            <el-avatar
+                :src="store.user.avatar"
+              />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+               
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
     </div>
     <el-container id="elcontainer">
       <el-header id="elheader">
@@ -94,16 +99,17 @@ import message from "@/views/farmer/HomeCom/message.vue";
 import new_huodon from "@/views/farmer/HomeCom/news.vue";
 import Footer from "@/views/farmer/HomeCom/footer.vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "../../stores/user";
+const store=useUserStore()
 
 const router = useRouter();
-
 const goToGy = () => {
   window.open("http://www.nxgy.gov.cn/zjgy/");
 };
 
 const logout = () => {
   localStorage.removeItem("user");
-  window.location.reload()
+  window.location.reload();
 };
 </script>
 <style scoped>
@@ -159,4 +165,5 @@ a {
   font-family: 宋体;
   text-align: left;
 }
+
 </style>
