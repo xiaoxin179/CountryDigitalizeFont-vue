@@ -1,37 +1,35 @@
 <template>
-  <div style="flex: 1; border: 1px solid #ccc; border-radius: 10px">
-    <el-form style="width: 600px" :model="user">
-      <el-form-item>
-        <el-upload
-          class="avatar-uploader"
-          :action="url"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          style="margin: 20px; margin-left: 50px"
-        >
-          <img v-if="user.avatar" :src="user.avatar" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
-      </el-form-item>
-      <el-form-item label="用户名:"
-        ><el-input v-model="user.username" disabled></el-input
-      ></el-form-item>
-      <el-form-item label="姓名："
-        ><el-input v-model="user.name" :disabled="isUpdate === 0"></el-input
-      ></el-form-item>
-      <el-form-item label="邮 箱："
-        ><el-input v-model="user.email" :disabled="isUpdate === 0"></el-input
-      ></el-form-item>
-      <el-form-item label="地 址："
-        ><el-input v-model="user.address" :disabled="isUpdate === 0"></el-input
-      ></el-form-item>
-    </el-form>
-    <div style="margin-left: 30px">
-      <el-button type="primary" style="margin-right: 450px" @click="update"
-        >修改</el-button
+  <el-form style="width: 600px" :model="user">
+    <el-form-item>
+      <el-upload
+        class="avatar-uploader"
+        :action="url"
+        :show-file-list="false"
+        :on-success="handleAvatarSuccess"
+        style="margin: 20px; margin-left: 50px"
       >
-      <el-button type="success" @click="save">保存</el-button>
-    </div>
+        <img v-if="user.avatar" :src="user.avatar" class="avatar" />
+        <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+      </el-upload>
+    </el-form-item>
+    <el-form-item label="用户名:"
+      ><el-input v-model="user.username" disabled></el-input
+    ></el-form-item>
+    <el-form-item label="姓名："
+      ><el-input v-model="user.name" :disabled="isUpdate === 0"></el-input
+    ></el-form-item>
+    <el-form-item label="邮 箱："
+      ><el-input v-model="user.email" :disabled="isUpdate === 0"></el-input
+    ></el-form-item>
+    <el-form-item label="地 址："
+      ><el-input v-model="user.address" :disabled="isUpdate === 0"></el-input
+    ></el-form-item>
+  </el-form>
+  <div style="margin-left: 30px">
+    <el-button type="primary" style="margin-right: 450px" @click="update"
+      >修改</el-button
+    >
+    <el-button type="success" @click="save">保存</el-button>
   </div>
 </template>
 <script setup>
@@ -68,6 +66,7 @@ const oldNew = ref(0);
 const younfNew = ref();
 const oldPhoto = ref(0);
 const newPhoto = ref();
+// 这个url的值就是用来绑定文件上传的接口
 const url = ref("http://" + config.serverUrl + "/file/upload");
 const handleAvatarSuccess = (res) => {
   if (res.code === "200") {

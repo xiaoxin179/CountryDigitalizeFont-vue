@@ -1,25 +1,29 @@
 <template>
   <div id="main">
     <!-- 设置布局 -->
-    <div id="head"  style="display: flex;">
+    <div id="head" style="display: flex">
       <div id="dzjy">
         <h3 class="title">乡村振兴数字化综合服务平台--闵宁镇</h3>
       </div>
-      <div style="flex:1;display: float;">
-        <span style="float: right;margin: 25px 15px 15px 15px;font-weight: lighter;color: #ccc;">{{ store.user.name }}</span>
-          <el-dropdown style="float:right;margin:15px">
-            <el-avatar
-                :src="store.user.avatar"
-              />
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-               
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          
-        </div>
+      <div style="flex: 1; display: float">
+        <span
+          style="
+            float: right;
+            margin: 25px 15px 15px 5px;
+            font-weight: lighter;
+            color: #ccc;
+          "
+          >{{ store.user.name }}</span
+        >
+        <el-dropdown style="float: right; margin: 15px">
+          <el-avatar :src="store.user.avatar" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
     <el-container id="elcontainer">
       <el-header id="elheader">
@@ -98,25 +102,39 @@
             "
           >
             <el-menu
-              default-active="2"
+              :default-active="acitve_index"
               class="el-menu-vertical-demo"
               style="margin-top: 100px"
             >
-              <el-menu-item index="1">
+              <el-menu-item
+                index="1"
+                @click="changePath('myInfo')"
+              >
                 <el-icon><User /></el-icon>
                 <span>个人资料</span>
               </el-menu-item>
-              <el-menu-item index="2">
+              <el-menu-item
+                index="2"
+                @click="changePath('messageTip')"
+              >
                 <el-icon><ChatDotRound /></el-icon>
                 <span>消息通知</span>
               </el-menu-item>
-              <el-menu-item index="3">
+              <el-menu-item
+                index="3"
+                @click="changePath('updatePwd')"
+
+              >
                 <el-icon><Lock /></el-icon>
                 <span>修改密码</span>
               </el-menu-item>
             </el-menu>
           </div>
-          <MainMyInfo/>
+          <div style="flex: 1; border: 1px solid #ccc; border-radius: 10px">
+            <MainMyInfo v-if="pagePath === 'myInfo'" />
+            <MessageTip v-if="pagePath === 'messageTip'" />
+            <PwdUpdate v-if="pagePath === 'updatePwd'" />
+          </div>
         </div>
         <!-- 网页底部信息 -->
         <Footer />
@@ -125,32 +143,56 @@
   </div>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { inject, reactive, ref } from "vue";
 import lunbo from "@/views/farmer/HomeCom/lunbo.vue";
 import message from "@/views/farmer/HomeCom/message.vue";
 import new_huodon from "@/views/farmer/HomeCom/news.vue";
 import Footer from "@/views/farmer/HomeCom/footer.vue";
 import { useUserStore } from "../../../stores/user";
 import request from "../../../utils/request";
-import MainMyInfo from '../../../Components/MainMyInfo.vue'
+import MainMyInfo from "../../../Components/MainMyInfo.vue";
+import MessageTip from "../../../Components/MessageTip.vue";
+import { useRoute } from "vue-router";
 import {
   Setting,
   ChatDotRound,
   Histogram,
   Plus,
   User,
+  Lock,
 } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import config from "../../../../configs";
+import router from "@/router";
+import PwdUpdate from "../../../Components/PwdUpdate.vue";
 // 退出登录函数
 const logout = () => {
   localStorage.removeItem("user");
   window.location.reload();
 };
 const store = useUserStore();
-
-
-
+const route = useRoute();
+const reload = inject("reload");
+// 获取参数
+const pagePath = route.query.page;
+const acitve_index=ref('3')
+const changePath = (pagePath) => {
+  router.push({ query: { page: pagePath } });
+  route.query.page = pagePath;
+  reload(); //重新渲染页面
+};
+// 根据点击的不同，让不同的按钮显示为高亮
+const highLight=()=>{
+  if(pagePath==='myInfo'){
+    acitve_index.value='1'
+  }else if(pagePath==='messageTip'){
+    acitve_index.value='2'
+  }else if(pagePath==='updatePwd'){
+    acitve_index.value='3'
+  }
+}
+// 调用高亮函数
+highLight()
 
 </script>
 <style scoped>
