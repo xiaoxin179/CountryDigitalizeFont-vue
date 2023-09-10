@@ -15,6 +15,9 @@ export const useUserStore = defineStore('user', {
     actions: {
         setUser(user) {
             this.user = user
+        },
+        setPassword(password){
+            this.password=password
         }
     },
     // 开启数据持久化

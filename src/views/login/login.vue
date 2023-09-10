@@ -51,7 +51,7 @@ import { reactive, ref } from "vue";
 import request from "@/utils/request";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../../stores/user";
-import { User,Lock } from "@element-plus/icons-vue";
+import { User, Lock } from "@element-plus/icons-vue";
 // 因为登录信息是一个对象，所以需要使用，reactive都是需要创建出一个空的对象，所以在括号里面不可以没有大括号
 const loginForm = reactive({});
 const router = useRouter();
@@ -68,9 +68,13 @@ const login = () => {
     if (valid) {
       request.post("/login", loginForm).then((res) => {
         if (res.code === "200") {
-          ElMessage.success("登录成功");
-          store.setUser(res.data); //数据持久化存储，user对象存储到浏览器
-          router.push("/");
+          if (res.data.isDelete === 0) {
+            ElMessage.error("账号被冻结，您无法登录");
+          } else {
+            ElMessage.success("登录成功");
+            store.setUser(res.data); //数据持久化存储，user对象存储到浏览器
+            router.push("/");
+          }
         } else {
           ElMessage.error(res.msg);
         }

@@ -173,14 +173,16 @@ const logout = () => {
 const store = useUserStore();
 const route = useRoute();
 const reload = inject("reload");
-// 获取参数
+// 获取路由参数
 const pagePath = route.query.page;
 const acitve_index=ref('3')
+// 组件切换函数
 const changePath = (pagePath) => {
   router.push({ query: { page: pagePath } });
   route.query.page = pagePath;
   reload(); //重新渲染页面
 };
+
 // 根据点击的不同，让不同的按钮显示为高亮
 const highLight=()=>{
   if(pagePath==='myInfo'){
