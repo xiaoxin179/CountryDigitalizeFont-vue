@@ -55,7 +55,7 @@
         <el-button
           type="text"
           class="nav-buy"
-          @click="this.$router.push('/farmer/person')"
+          @click="this.$router.push('/farmer/person?page=myInfo')"
           ><span class="cul-wenzi">个人中心</span></el-button
         >
         <el-dropdown size:large>

@@ -28,6 +28,12 @@
         <el-button
           type="text"
           class="nav-buy"
+          @click="this.$router.push('/farmer/cul/chat')"
+          ><span class="cul-wenzi">公共聊天室</span></el-button
+        >
+        <el-button
+          type="text"
+          class="nav-buy"
           @click="this.$router.push('/farmer/cul/sence')"
           ><span class="cul-wenzi">乡村风景分享</span></el-button
         >
@@ -37,6 +43,7 @@
           @click="this.$router.push('/farmer/cul/person')"
           ><span class="cul-wenzi">个人中心</span></el-button
         >
+        
       </el-header>
       <el-main>
         <!-- 在这里设置路由的出口 -->

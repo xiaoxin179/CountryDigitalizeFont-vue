@@ -176,6 +176,7 @@ const reload = inject("reload");
 // 获取路由参数
 const pagePath = route.query.page;
 const acitve_index=ref('3')
+
 // 组件切换函数
 const changePath = (pagePath) => {
   router.push({ query: { page: pagePath } });

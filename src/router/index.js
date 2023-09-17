@@ -86,6 +86,11 @@ const router = createRouter({
           path: '/farmer/cul/activity',
           name: 'Activity',
           component: () => import('@/views/farmer/Culture/activity/main.vue')
+        },
+        {
+          path: '/farmer/cul/chat',
+          name: 'Chat',
+          component: () => import('@/views/farmer/Culture/scene/chat.vue')
         }
       ]
 
